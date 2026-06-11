@@ -6,7 +6,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 const db = new pg.Client({
     user:process.env.DB_USER,
@@ -21,8 +21,14 @@ db.connect();
 // app.use(cors());
 app.use(express.json())
 
-app.get("/",(req,res)=>{
-    res.send("fittrack api running")
+app.get("/test",async (req,res)=>{
+    try{
+        const result =await db.query("select NOW()");
+        res.json(result.rows)
+    }catch(err){
+        console.log(err);
+        res.status(500).send("database error");
+    }
 })
 
 app.post("/submit",(req,res)=>{
